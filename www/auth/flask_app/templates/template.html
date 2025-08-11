@@ -1,0 +1,40 @@
+<html>
+<head>
+  <title>Demo</title>
+
+  <script type="module">
+    import {
+        create,
+        parseCreationOptionsFromJSON,
+    } from '/webauthn-json.browser-ponyfill.js';
+
+    async function start() {
+      let request = await fetch('/api/register/begin', {
+        method: 'POST',
+      });
+      let json = await request.json();
+      let options = parseCreationOptionsFromJSON(json);
+
+      let response = await create(options);
+      let result = await fetch('/api/register/complete', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+	body: JSON.stringify(response),
+      });
+
+      let stat = result.ok ? 'successful' : 'unsuccessful';
+      console.log(stat)
+      window.location = '{{next}}';
+    }
+
+    window.start = start;
+  </script>
+
+</head>
+<body>
+  <div id="initial">
+    <button onclick="start();">Click here to start</button>
+  </div>
+</body>
+</html>
+
