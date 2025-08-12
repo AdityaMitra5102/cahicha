@@ -137,6 +137,9 @@ def initport():
     if not 'Listen 5000' in text:
         with open('/etc/apache2/ports.conf', 'a') as file:
             file.write('\nListen 5000\n')
+    if not 'Listen 80' in text:
+        with open('/etc/apache2/ports.conf', 'a') as file:
+            file.write('\nListen 80\n')
 
 def list_all_files(folder_path, config):
     """
