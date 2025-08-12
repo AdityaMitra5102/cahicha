@@ -128,6 +128,9 @@ def catch_all(path):
 @app.route('/cahichacheck')
 def checkpage():
     original_path=request.args.get('next', '/')
+    validationcookie=request.cookies.get('cahicha_token', '')
+    if validate_token(validationcookie):
+        return redirect(original_path)
     return render_template('template.html', next=original_path)
     
 @app.route('/cahichafinal', methods=['POST'])
