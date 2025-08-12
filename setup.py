@@ -118,13 +118,13 @@ def setup_cahicha():
 
 def change_file(config, filepath):
     text=''
-    if '.git' in filepath:
+    if '.git' in str(filepath):
         return
     with open(filepath, 'r') as file:
         text=file.read()
     for key, value in config.items():
-        text=text.replace(f'$${key}$$', value)
-    with open(filename, 'w') as file:
+        text=text.replace(f'$${key}$$', str(value))
+    with open(filepath, 'w') as file:
         file.write(text)
 
 
