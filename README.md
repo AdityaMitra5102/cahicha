@@ -18,6 +18,9 @@ wget https://adityamitra5102.github.io/cahicha/setup.py
 sudo python3 setup.py
 ```
 
-Step Setup TLS. You may use Certbot or any other tool, or even set up manually. If doing manually, set it up only on 001-default.conf on apache2. Ensure it is serving on port 443 after adding TLS.
+Step 5: Setup TLS. You may use Certbot or any other tool, or even set up manually. If doing manually, set it up only on 001-default.conf on apache2. Ensure it is serving on port 443 after adding TLS.
 
 Thus, CAHICHA can be set up on any website without any changes in the website itself, and yet protect it from scrapers and bots.
+
+
+⚠️ Do note that this setup works for only Ubuntu and Debian based web servers. For others, you may modify the setup scripts accordingly. 
