@@ -13,7 +13,7 @@ import json
 
 app = Flask(__name__, static_url_path="")
 app.secret_key = os.urandom(32)  
-rp = PublicKeyCredentialRpEntity(name="Demo server", id="$$host$$")
+rp = PublicKeyCredentialRpEntity(name="Demo server", id="$$domainname$$")
 
 
 server = Fido2Server(rp)
