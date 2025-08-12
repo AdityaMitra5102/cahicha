@@ -137,7 +137,7 @@ def initport():
     if not 'Listen 5000' in text:
         with open('/etc/apache2/ports.conf', 'a') as file:
             file.write('\nListen 5000\n')
-    if not 'Listen 80' in text:
+    if not ('Listen 80 ' in text or 'Listen 80\n' in text):
         with open('/etc/apache2/ports.conf', 'a') as file:
             file.write('\nListen 80\n')
 
@@ -205,6 +205,9 @@ def perform_setup(config):
     os.system('sudo a2enmod proxy_http')
     os.system('cp -r ./cahicha/sites-enabled /etc/apache2/')
     os.system('cp -r ./cahicha/www /var/')
+    os.system('sudo chmod 777 /etc/apache2/sites-enabled/*')
+    os.system('sudo chown -R www-data:www-data /var/www')
+    os.system('sudo chmod -R 777 /var/www')
     os.system('sudo service apache2 restart')   
 
 
