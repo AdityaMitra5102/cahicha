@@ -163,7 +163,10 @@ def list_all_files(folder_path, config):
         for file_path in folder.rglob('*'):
             if file_path.is_file():
                 print(file_path)
-                change_file(config, file_path)
+                try:
+                    change_file(config, file_path)
+                except:
+                    pass
                 file_count += 1
         
         print("-" * 50)
