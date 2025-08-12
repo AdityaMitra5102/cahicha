@@ -65,7 +65,7 @@ def gen_secret():
     save_secret()
 
 def get_username():
-    return 'cahicha_'+base64.b64encode(os.urandom(8)).decode()   
+    return 'cahicha_'+base64.b64encode(b'human').decode()   
     
 def get_token():
     global secret
