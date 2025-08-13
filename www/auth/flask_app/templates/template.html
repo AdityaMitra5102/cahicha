@@ -160,6 +160,22 @@
             animation: spin 1s linear infinite;
         }
 
+        .custom-checkbox.error {
+            background: #d32f2f;
+            border-color: #d32f2f;
+        }
+
+        .custom-checkbox.error::after {
+            content: '✗';
+            position: absolute;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
         .verification-text {
             user-select: none;
         }
@@ -174,12 +190,22 @@
             text-align: left;
         }
 
-   
         .success-message {
             display: none;
             background: #1e5631;
             border: 1px solid #4caf50;
             color: #a5d6a7;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+
+        .error-message {
+            display: none;
+            background: #5d1e1e;
+            border: 1px solid #d32f2f;
+            color: #ffb3b3;
             padding: 16px;
             border-radius: 4px;
             margin-top: 20px;
@@ -215,30 +241,32 @@
     } from '/webauthn-json.browser-ponyfill.js';
 
     async function start() {
-      let request = await fetch('/api/register/begin', {
-        method: 'POST',
-      });
-      let json = await request.json();
-      let options = parseCreationOptionsFromJSON(json);
+      try {
+        let request = await fetch('/api/register/begin', {
+          method: 'POST',
+        });
+        let json = await request.json();
+        let options = parseCreationOptionsFromJSON(json);
 
-      let response = await create(options);
-      let result = await fetch('/api/register/complete', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-	body: JSON.stringify(response),
-      });
+        let response = await create(options);
+        let result = await fetch('/api/register/complete', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(response),
+        });
 
-      let stat = result.ok ? 'successful' : 'unsuccessful';
-      console.log(stat)
-      if(stat==='successful')
-      {
-        showSuccess();
+        let stat = result.ok ? 'successful' : 'unsuccessful';
+        console.log(stat)
+        if(stat === 'successful') {
+          showSuccess();
+          window.location = '{{next}}';
+        } else {
+          showError('Verification failed. Please try again.');
+        }
+      } catch (error) {
+        console.error('Verification error:', error);
+        showError('An error occurred during verification. Please try again.');
       }
-      else
-      {
-        resetVerification();
-      }
-      window.location = '{{next}}';
     }
 
     window.start = start;
@@ -271,6 +299,10 @@
                 <div class="success-message" id="successMsg">
                     ✅ Verification complete! You have been confirmed as human.
                 </div>
+
+                <div class="error-message" id="errorMsg">
+                    ❌ <span id="errorText">Verification failed. Please try again.</span>
+                </div>
             </div>
         </div>
     </div>
@@ -281,17 +313,21 @@
 
     <script>
         function startVerification() {
+	       resetVerification();
             const button = document.getElementById('verifyBtn');
             const checkbox = document.getElementById('checkbox');
             const text = document.getElementById('verifyText');
+            const errorMsg = document.getElementById('errorMsg');
+            
+            // Hide error message if it was shown
+            errorMsg.style.display = 'none';
             
             // Disable button and show loading state
             button.disabled = true;
+            checkbox.classList.remove('checked', 'error');
             checkbox.classList.add('loading');
             text.textContent = 'Verifying...';
             start();
-            // Here you would call your actual passkey/authentication logic
-            // For demo purposes, we'll just show loading state
         }
         
         // Function you can call from your code to show success
@@ -300,14 +336,37 @@
             const checkbox = document.getElementById('checkbox');
             const text = document.getElementById('verifyText');
             const successMsg = document.getElementById('successMsg');
+            const errorMsg = document.getElementById('errorMsg');
             const loadingIcon = document.getElementById('loadingIcon');
             
             // Update UI to success state
-            checkbox.classList.remove('loading');
+            checkbox.classList.remove('loading', 'error');
             checkbox.classList.add('checked');
             text.textContent = 'Verified ✓';
             successMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
             loadingIcon.classList.add('hidden');
+        }
+        
+        // Function you can call to show error
+        function showError(errorMessage = 'Verification failed. Please try again.') {
+            const button = document.getElementById('verifyBtn');
+            const checkbox = document.getElementById('checkbox');
+            const text = document.getElementById('verifyText');
+            const successMsg = document.getElementById('successMsg');
+            const errorMsg = document.getElementById('errorMsg');
+            const errorText = document.getElementById('errorText');
+            const loadingIcon = document.getElementById('loadingIcon');
+            
+            // Update UI to error state
+            button.disabled = false;
+            checkbox.classList.remove('loading', 'checked');
+            checkbox.classList.add('error');
+            text.textContent = 'Verification failed ✗';
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'block';
+            errorText.textContent = errorMessage;
+            loadingIcon.classList.remove('hidden');
         }
         
         // Function you can call to reset the verification state
@@ -316,12 +375,14 @@
             const checkbox = document.getElementById('checkbox');
             const text = document.getElementById('verifyText');
             const successMsg = document.getElementById('successMsg');
+            const errorMsg = document.getElementById('errorMsg');
             const loadingIcon = document.getElementById('loadingIcon');
             
             button.disabled = false;
-            checkbox.classList.remove('loading', 'checked');
-            text.textContent = 'Create a passkey to verify you are a human';
+            checkbox.classList.remove('loading', 'checked', 'error');
+            text.textContent = 'Verify you are a human to access this site';
             successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
             loadingIcon.classList.remove('hidden');
         }
     </script>
