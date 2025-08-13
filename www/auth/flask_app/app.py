@@ -16,7 +16,7 @@ import requests
 
 app = Flask(__name__, static_url_path="")
 app.secret_key = os.urandom(32)  
-rp = PublicKeyCredentialRpEntity(name="Demo server", id="$$domainname$$")
+rp = PublicKeyCredentialRpEntity(name="CAHICHA", id="$$domainname$$")
 
 
 
@@ -57,9 +57,9 @@ def getMds():
     metadata=parse_blob(resptext, ca)
     mds=MdsAttestationVerifier(metadata)
     
-getMds()
-server = Fido2Server(rp, attestation='direct', verify_attestation=mds,)
-
+#getMds()
+#server = Fido2Server(rp, attestation='direct', verify_attestation=mds,)
+server = Fido2Server(rp)
 secret={}
 
 def save_secret():
