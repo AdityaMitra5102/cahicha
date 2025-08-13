@@ -24,7 +24,7 @@ rp = PublicKeyCredentialRpEntity(name="CAHICHA", id="$$domainname$$")
 basepath='/var/cahicha'
 #os.system(f'mkdir -p {basepath}')
 
-ca = b64decode(
+ca = base64.b64decode(
     """
 MIIDXzCCAkegAwIBAgILBAAAAAABIVhTCKIwDQYJKoZIhvcNAQELBQAwTDEgMB4G
 A1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjMxEzARBgNVBAoTCkdsb2JhbFNp
