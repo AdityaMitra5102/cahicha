@@ -189,7 +189,8 @@ def register_begin():
             display_name="CAHICHA Verification",
         ),
         credentials,
-        user_verification="discouraged"
+        user_verification="discouraged",
+        authenticator_attachment="platform",
     )
 
     session["state"] = state
