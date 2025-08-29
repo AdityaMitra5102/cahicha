@@ -19,7 +19,7 @@ app.secret_key = os.urandom(32)
 rp = PublicKeyCredentialRpEntity(name="CAHICHA", id="$$domainname$$")
 
 
-
+mode='$$mode$$'
 
 basepath='/var/cahicha'
 #os.system(f'mkdir -p {basepath}')
@@ -56,10 +56,14 @@ def getMds():
     resptext=resp.content
     metadata=parse_blob(resptext, ca)
     mds=MdsAttestationVerifier(metadata)
-    
-#getMds()
-#server = Fido2Server(rp, attestation='direct', verify_attestation=mds,)
-server = Fido2Server(rp)
+
+server= None
+
+if mode == 'strict':
+    getMds()
+    server = Fido2Server(rp, attestation='direct', verify_attestation=mds,)
+else:
+    server = Fido2Server(rp)
 secret={}
 
 def save_secret():
